@@ -1,15 +1,3 @@
-Sure! Here's a professional and complete `README.md` file for your **Face Mask Detection System** project, including details about:
-
-* What the project does
-* How it works
-* Requirements
-* Training and live detection
-* Sample code
-* Licensing info
-
----
-
-### ✅ `README.md`
 
 ````markdown
 # 😷 Face Mask Detection Using CNN + OpenCV + Keras + TTS
