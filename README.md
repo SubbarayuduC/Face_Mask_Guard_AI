@@ -152,22 +152,9 @@ This project is for educational and research use only.
 
 ## 👨‍💻 Author
 
-**Karan**
+
 Modifications and voice alert by **Subbarayudu Chittiboina**
 
 ---
 
-## 🙋 Need Help?
-
-If you're facing issues with:
-
-* Webcam not opening
-* No prediction
-* Missing files
-
-Feel free to raise an issue or contact me.
-
-```
-
----
 
