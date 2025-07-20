@@ -1,0 +1,131 @@
+Great! Let's do both:
+
+---
+
+## ✅ 1. `requirements.txt` for Face Mask Detection Project
+
+Here is a complete `requirements.txt` file based on your project dependencies:
+
+```txt
+opencv-python==4.9.0.80
+numpy==1.24.4
+keras==2.12.0
+tensorflow==2.12.0
+pyttsx3==2.90
+h5py==3.10.0
+streamlit==1.35.0
+Pillow==10.3.0
+```
+
+> 🔹 Save this as `requirements.txt` in your project root and install with:
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## ✅ 2. Convert to Streamlit Web App
+
+Below is a basic **Streamlit version** of your face mask detection app (`app.py`). This uses the webcam and shows the live detection results in the browser with labels.
+
+### 🔧 `app.py` (Streamlit Version)
+
+```python
+import streamlit as st
+import cv2
+import numpy as np
+from keras.models import load_model
+from keras.preprocessing.image import img_to_array
+from datetime import datetime
+import pyttsx3
+from PIL import Image
+
+st.set_page_config(page_title="Face Mask Detector", layout="centered")
+st.title("😷 Real-Time Face Mask Detection App")
+
+# Load model and cascade
+mymodel = load_model('mymodel.h5')
+face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+
+engine = pyttsx3.init()
+last_spoken_time = None
+
+def predict_mask(face_img):
+    face = cv2.resize(face_img, (150, 150))
+    face = face.astype("float") / 255.0
+    face = img_to_array(face)
+    face = np.expand_dims(face, axis=0)
+    pred = mymodel.predict(face)[0][0]
+    return pred
+
+def speak_alert(label):
+    global last_spoken_time
+    current_time = datetime.now()
+
+    if last_spoken_time is None or (current_time - last_spoken_time).seconds >= 3:
+        engine.say(f"Person {label}")
+        engine.runAndWait()
+        last_spoken_time = current_time
+
+run = st.checkbox('Start Webcam Detection')
+
+FRAME_WINDOW = st.image([])
+
+if run:
+    cap = cv2.VideoCapture(0)
+
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            st.error("Failed to access webcam.")
+            break
+
+        faces = face_cascade.detectMultiScale(frame, scaleFactor=1.1, minNeighbors=5)
+
+        for (x, y, w, h) in faces:
+            face_img = frame[y:y+h, x:x+w]
+            pred = predict_mask(face_img)
+
+            if pred >= 0.5:
+                label = "without mask"
+                color = (0, 0, 255)
+            else:
+                label = "with mask"
+                color = (0, 255, 0)
+
+            cv2.putText(frame, label, (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, color, 2)
+            cv2.rectangle(frame, (x, y), (x+w, y+h), color, 2)
+
+            speak_alert(label)
+
+        # Convert BGR to RGB
+        FRAME_WINDOW.image(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+
+    cap.release()
+else:
+    st.write("Click the checkbox to start detection.")
+
+```
+
+---
+
+## 📦 Final Project Structure
+
+```text
+FaceMaskDetector/
+├── app.py                      # Streamlit app
+├── mymodel.h5                  # Trained model
+├── haarcascade_frontalface_default.xml
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## ✅ Run the Streamlit App
+
+```bash
+streamlit run app.py
+```
+
